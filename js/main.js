@@ -2,12 +2,24 @@ const listaPokemon = document.getElementById('listaPokemon');
 let URL = 'https://pokeapi.co/api/v2/pokemon/';
 
 for (let i = 1; i <= 151; i++) {
-  fetch(`${URL}${i}`)
+  fetch(URL + i)
     .then((response) => response.json())
     .then((data) => mostrarPokemon(data));
 }
 
 function mostrarPokemon(pokemon) {
+  let tipos = pokemon.types.map(
+    (tipo) => `<p class="${tipo.type.name} tipo">${tipo.type.name}</p>`
+  );
+  tipos = tipos.join('');
+
+  let pokemonId = pokemon.id.toString();
+  if (pokemonId.length == 1) {
+    pokemonId = '00' + pokemonId;
+  } else if (pokemonId.length == 2) {
+    pokemonId = '0' + pokemonId;
+  }
+
   const div = document.createElement('div');
   div.classList.add('pokemon');
   div.innerHTML = `
@@ -18,12 +30,11 @@ function mostrarPokemon(pokemon) {
     </div>
     <div class="pokemon-info">
       <div class="nombre-contenedor">
-        <p class="pokemon-id">#${pokemon.id}</p>
+        <p class="pokemon-id">#${pokemonId}</p>
         <h2 class="pokemon-nombre">${pokemon.name}</h2>
       </div>
       <div class="pokemon-tipos">
-        <p class="electric tipo">ELECTRIC</p>
-        <p class="fighting tipo">FIGHTING</p>
+        ${tipos}
       </div>
       <div class="pokemon-stats">
         <p class="stat">${pokemon.height}m</p>
