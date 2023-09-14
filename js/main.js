@@ -1,4 +1,5 @@
 const listaPokemon = document.getElementById('listaPokemon');
+const botonesHeader = document.querySelectorAll('.btn-header');
 let URL = 'https://pokeapi.co/api/v2/pokemon/';
 
 for (let i = 1; i <= 151; i++) {
@@ -23,7 +24,7 @@ function mostrarPokemon(pokemon) {
   const div = document.createElement('div');
   div.classList.add('pokemon');
   div.innerHTML = `
-    <p class="pokemon-id-back">#025</p>
+    <p class="pokemon-id-back">#${pokemonId}</p>
     <div class="pokemon-imagen">
       <img
         src="${pokemon.sprites.other['official-artwork'].front_default}">
@@ -42,5 +43,28 @@ function mostrarPokemon(pokemon) {
       </div>
     </div>
   `;
-  listaPokemon.appendChild(div);
+  listaPokemon.append(div);
 }
+
+botonesHeader.forEach((boton) =>
+  boton.addEventListener('click', (event) => {
+    const botonId = event.currentTarget.id;
+
+    listaPokemon.innerHTML = '';
+
+    for (let i = 1; i <= 151; i++) {
+      fetch(URL + i)
+        .then((response) => response.json())
+        .then((data) => {
+          if (botonId == 'ver-todos') {
+            mostrarPokemon(data);
+          } else {
+            const tipos = data.types.map((tipo) => tipo.type.name);
+            if (tipos.some((tipo) => tipo.includes(botonId))) {
+              mostrarPokemon(data);
+            }
+          }
+        });
+    }
+  })
+);
